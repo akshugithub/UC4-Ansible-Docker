@@ -1,0 +1,39 @@
+- hosts: dev
+  become: yes
+  vars:
+   tomcat_ports: 9988
+  tasks:
+   - name: Upgrade all packages
+     yum:
+      name: '*'
+      state: latest
+   - name: install java packages
+     yum:
+      name: java-1.8.0-openjdk
+      state: present   
+   - name: Download foo.conf
+     get_url:
+      url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71.tar.gz
+      dest: /opt
+      mode: '0777' 
+   - name: Unarchive a file that is already on the remote machine
+     unarchive:
+      src: /opt/apache-tomcat-9.0.71.tar.gz
+      dest: /opt
+      remote_src: yes
+      mode: '0777'
+   - name: Template a file to /etc/file.conf
+     template:
+      src: ./server.xml.j2
+      dest: /opt/apache-tomcat-9.0.71/conf/server.xml 
+      mode: '0777'   
+   - name: starting tomcat
+     shell: nohup /opt/apache-tomcat-9.0.71/bin/shutdown.sh &
+   - name: shutdown tomcat
+     shell: nohup /opt/apache-tomcat-9.0.71/bin/startup.sh &
+   - name: Copy file with owner and permissions
+     copy:
+      src: target/*.war
+      dest: /opt/apache-tomcat-9.0.71/webapps/sample.war
+      mode: '0777'
+  
