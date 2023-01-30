@@ -10,7 +10,7 @@ pipeline{
         stage('SCM'){
             steps{
                 git credentialsId: 'github', 
-                    url: 'https://github.com/arunkeerthi/dockeransiblejenkins.git'
+                    url: 'https://github.com/akshugithub/UC4-Ansible-Docker.git'
             }
         }
         
@@ -22,17 +22,17 @@ pipeline{
         
         stage('Docker Build'){
             steps{
-                sh "docker build . -t arunkeerthi3101/hariapp:${DOCKER_TAG} "
+                sh "docker build . -t akshayamurali/usecase4:${DOCKER_TAG} "
             }
         }
         
         stage('DockerHub Push'){
             steps{
                 withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
-                    sh "docker login -u arunkeerthi3101 -p ${dockerHubPwd}"
+                    sh "docker login -u akshayamurali -p ${dockerHubPwd}"
                 }
                 
-                sh "docker push arunkeerthi3101/hariapp:${DOCKER_TAG} "
+                sh "docker push akshayamurali/usecase4:${DOCKER_TAG} "
             }
         }
         
